@@ -10,4 +10,5 @@ end
 use Rack::MethodOverride
 
 use UsersController
+use AdminsController
 run ApplicationController

@@ -13,4 +13,20 @@ class ApplicationController < Sinatra::Base
     erb :welcome
   end
 
+  helpers do
+    def student_logged_in?
+			!!session[:student_id]
+    end  
+    def provider_logged_in?
+			!!session[:provider_id]
+		end 
+    def current_student
+      Student.find_by(id: session[:student_id])
+    end
+    def current_provider
+      Provider.find_by(id: session[:provider_id])
+    end
+
+  end
+
 end
