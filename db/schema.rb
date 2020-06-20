@@ -27,6 +27,7 @@ ActiveRecord::Schema.define(version: 20200617204645) do
     t.string   "wifi_password"
     t.integer  "duration_days"
     t.integer  "approved"
+    t.integer  "rating"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end

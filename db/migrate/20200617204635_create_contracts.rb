@@ -7,6 +7,7 @@ class CreateContracts < ActiveRecord::Migration
       t.string :wifi_password
       t.integer :duration_days     
       t.integer :approved
+      t.integer :rating
       t.timestamps null: false  
     end       
   end
