@@ -11,3 +11,6 @@ class CreateContracts < ActiveRecord::Migration
     end       
   end
 end
+
+# !!! there needs to be a way for students to rate if the wifi works or not, so providers can't post bogus wifi, or know that something's wrong with the connection
+
