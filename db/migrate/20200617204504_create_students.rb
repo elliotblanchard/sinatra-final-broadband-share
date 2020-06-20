@@ -5,7 +5,7 @@ class CreateStudents < ActiveRecord::Migration
       t.string :email
       t.string :password_digest
       t.string :address
-      t.string :latlong
+      t.string :latlong # !!! you may not need this if you have a verified address
       t.timestamps null: false  
     end     
   end

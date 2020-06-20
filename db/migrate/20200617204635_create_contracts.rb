@@ -5,7 +5,7 @@ class CreateContracts < ActiveRecord::Migration
       t.integer :provider_id       
       t.string :wifi_name
       t.string :wifi_password
-      t.integer :duration_days     
+      t.integer :duration_days # !!! do you really need this or can they just un-approve it? If you have it, you need to have a start date     
       t.integer :approved
       t.integer :rating
       t.timestamps null: false  

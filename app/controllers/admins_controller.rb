@@ -15,9 +15,12 @@ post "/login_admin" do
 end
 
 get '/admin' do
-    # !!! need to only allow the logged in admin with correct ID to see this page
-    "at admin profile page"
-     #erb:'/admins/show' 
+    if (admin_logged_in?)
+        "at admin profile page"
+        #erb:'/admins/show' 
+    else
+        redirect '/'
+    end
 end 
 
 end

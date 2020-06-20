@@ -1,7 +1,14 @@
 class UsersController < ApplicationController
+    MIN_DISTANCE = 0.3 #minimum distance (in miles) for a wifi network to be considered in range of a student
 
     get "/login" do
-        erb :login
+        if student_logged_in?
+            redirect "/student/#{current_student.id}"
+        elsif provider_logged_in?
+            redirect "/provider/#{current_provider.id}"
+        else
+            erb :login
+        end
     end
 
     post "/login" do
@@ -25,17 +32,38 @@ class UsersController < ApplicationController
     end
 
     get '/student/:id' do
-        # !!! need to only allow the logged in student with correct ID to see their page
-        @student = Student.find(params[:id])
-        "at student profile page"
-         #erb:'/students/show' 
+        if (student_logged_in?) && (current_student.id == params[:id].to_i)
+            @student = Student.find(params[:id])
+
+            #Get all active contracts
+            active_contracts = Contract.all.select { |contract| contract.approved == 1 }
+
+            #Get all active contracts in range
+            student_location = get_location(@student.address) #GeoKit location object
+            @nearby_contracts = []
+            active_contracts.each do |contract|
+                contract_location = get_location(contract.provider.address) #GeoKit location object
+                distance = student_location.distance_to(contract_location)
+                if distance < UsersController::MIN_DISTANCE
+                    hash = { :contract => contract, :distance => distance }
+                    @nearby_contracts << hash
+                end
+            end
+
+            erb:'/students/show' 
+        else
+            redirect '/'
+        end        
     end 
 
     get '/provider/:id' do
-        # !!! need to only allow the logged in provider with correct ID to see their page
-        @provider = Provider.find(params[:id])
-        "at provider profile page"
-         #erb:'/providers/show' 
+        if (provider_logged_in?) && (current_provider.id == params[:id].to_i)
+            @provider = Provider.find(params[:id])
+            "at provider profile page"
+            #erb:'/providers/show' 
+        else
+            redirect '/'
+        end
     end 
 
     get '/signup' do
@@ -53,8 +81,11 @@ class UsersController < ApplicationController
         Dotenv.load('.env') #Loads the API key using the Dotenv GEM
         Geokit::Geocoders::GoogleGeocoder.api_key = ENV['GOOGLE_API_KEY'] #Loads the API key into Geokit
         location = Geokit::Geocoders::GoogleGeocoder.geocode full_address
+        
+        # !!! need to test if the address is valid using check_address(address)
 
         if params[:user_type] == "student"
+            # !!! may not need to have / save latlong if you have a verified street address
             student = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             if student.save
                 session[:student_id] = student.id
@@ -63,6 +94,7 @@ class UsersController < ApplicationController
                 redirect "/signup"
             end
         else
+            # !!! may not need to have / save latlong if you have a verified street address
             provider = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             if provider.save
                 session[:provider_id] = provider.id
@@ -72,14 +104,6 @@ class UsersController < ApplicationController
             end
         end        
 
-        # Signup code from fwtwitter
-		#user = User.new(:username => params[:username], :email => params[:email], :password => params[:password])
-        #if (user.save) && (params[:username].length > 0) && (params[:email].length > 0)
-        #   session[:user_id] = user.id
-		#	redirect "/tweets"
-		#else
-		#	redirect "/signup"
-        #end
         # Check location is valid from CLI
         # Confirms address user entered exists
         #Dotenv.load('.env') #Loads the API key using the Dotenv GEM - you must re-create the .env file in root directory

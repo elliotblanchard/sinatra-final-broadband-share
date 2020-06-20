@@ -1,0 +1,16 @@
+<h1><%=@student.username%></h1>
+<h2>Email: <%=@student.email%></h2>
+<h2>Address: <%=@student.address%></h2>
+<h3>Wifi near you:</h3>
+<ul>
+  <% @nearby_contracts.each do |contract| %>
+    <p>
+        <h4>Wifi network name: <%= contract[:contract].wifi_name %></h4>
+        <ol>
+           <li>Network password: <%= contract[:contract].wifi_password %></li>
+           <li>Distance: <%= contract[:distance].to_f.round(1) %> miles</li>
+           <li><a href="#">Works</a> or <a href="#">Does not work</a>
+        </ol>
+     </p>
+  <% end %>
+</ul>
