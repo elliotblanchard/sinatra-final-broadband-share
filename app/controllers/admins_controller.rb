@@ -23,7 +23,7 @@ get '/admin' do
         #Get all active contracts
         @active_contracts = Contract.all.select { |contract| contract.approved == 1 }
         Dotenv.load('.env') #Loads the API key
-        @api_key =  ENV['GOOGLE_API_KEY'] #Loads the API key using the Dotenv GEM 
+        @api_key =  ENV['GOOGLE_MAPS_API_KEY'] #Loads the API key using the Dotenv GEM 
         erb:'/admins/show' 
     else
         redirect '/'

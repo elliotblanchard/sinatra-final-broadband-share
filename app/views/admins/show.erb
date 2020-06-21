@@ -3,7 +3,7 @@
   <head>
     <style>
        /* Set the size of the div element that contains the map */
-      #map_students {
+      #map {
         height: 400px;  /* The height is 400 pixels */
         width: 100%;  /* The width is the width of the web page */
        }
@@ -14,19 +14,44 @@
     <h2>Number of students: <%=@students.length%></h2>
     <h2>Number of providers: <%=@providers.length%></h2>
     <h2>Number of shared networks: <%=@active_contracts.length%></h2>
-    <h3>Students Map</h3>
+    <h3>Students (circle) + Shared Networks (arrow) Maps</h3>
     <!--The div element for the map -->
-    <div id="map_students"></div>
+    <div id="map"></div>
     <script>
     // Initialize and add the map
     function initMap() {
-    // The location of Uluru
-    var uluru = {lat: -25.344, lng: 131.036};
-    // The map, centered at Uluru
-    var map = new google.maps.Map(
-    document.getElementById('map_students'), {zoom: 4, center: uluru});
-    // The marker, positioned at Uluru
-    var marker = new google.maps.Marker({position: uluru, map: map});
+    // The location of students
+    <% @students.each do |student| %>
+        var student_<%=student.id%> = {lat: <%=student.latlong.split(',').first%>, lng: <%=student.latlong.split(',').last%>};
+    <% end %>
+    // The location of providers
+    <% @active_contracts.each do |contract| %>
+        var provider_<%=contract.provider.id%> = {lat: <%=contract.provider.latlong.split(',').first%>, lng: <%=contract.provider.latlong.split(',').last%>};
+    <% end %>    
+    // The map, centered at the first student
+    var map = new google.maps.Map(document.getElementById('map'), {zoom: 15, center: student_<%=@students.first.id%>});
+    // The markers, positioned for each student
+    <% @students.each do |student| %>
+        var marker_<%=student.id%> = new google.maps.Marker({
+            position: student_<%=student.id%>, 
+            icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 3
+              },            
+            map: map
+        });
+    <% end %>
+    // The markers, positioned for each provider
+    <% @active_contracts.each do |contract| %>
+        var marker_<%=contract.provider.id%> = new google.maps.Marker({
+            position: provider_<%=contract.provider.id%>, 
+            icon: {
+                path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
+                scale: 2
+              },            
+            map: map
+        });
+    <% end %>    
     }
     </script>
     <!--Load the API from the specified URL
@@ -35,7 +60,7 @@
     * The callback parameter executes the initMap() function
     -->
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=<%=@api_key%>&callback=initMap">
     </script>
 </body>
 </html>
