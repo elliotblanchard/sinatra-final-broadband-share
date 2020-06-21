@@ -31,6 +31,7 @@ class ApplicationController < Sinatra::Base
       Provider.find_by(id: session[:provider_id])
     end
     def check_address(address)
+      # !!! should this be in the model instead of view?
       # Confirms address user entered exists
       Dotenv.load('.env') #Loads the API key using the Dotenv GEM - you must re-create the .env file in root directory
       Geokit::Geocoders::GoogleGeocoder.api_key = ENV['GOOGLE_API_KEY']
@@ -44,6 +45,7 @@ class ApplicationController < Sinatra::Base
       end
     end    
     def get_location(address)
+      # !!! should this be in the model instead of view?
       #Returns a location object of a street address using Geokit and the Google API
       Dotenv.load('.env') #Loads the API key
       Geokit::Geocoders::GoogleGeocoder.api_key = ENV['GOOGLE_API_KEY'] #Loads the API key using the Dotenv GEM - you must re-create the .env file in root directory

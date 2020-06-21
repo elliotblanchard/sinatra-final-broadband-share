@@ -1,0 +1,46 @@
+<h1><%=@provider.username%></h1>
+<h2>Email: <%=@provider.email%></h2>
+<h2>Address: <%=@provider.address%></h2>
+<% if @nearby_students %>
+    <h3>There are students in your area</h3>
+<% end %>
+<% if @provider.contracts.length > 0 %>
+<h3>Your shared wifi networks:</h3>
+<ul>
+  <% @provider.contracts.each do |contract| %>
+    <p>
+        <h4>Share name: <%= contract.name %></h4>
+        <ol>
+           <li>Wifi network name: <%= contract.wifi_name %></li>
+           <li>Network password: <%= contract.wifi_password %></li>
+           <li>Student rating: <%= contract.rating %></li>
+           <% if contract.approved == 1  %>
+            <li>Network is shared.</li>
+           <% else %>
+            <li>Network is not shared.</li>
+           <% end %>
+           <li><a href="#">Edit</a> or <a href="#">Delete</a>
+        </ol>
+     </p>
+  <% end %>
+</ul>
+<% end %>
+<h3>Add a wifi network to share:</h3>
+<form action="/contracts" method="POST">
+    <input id="hidden" type="hidden" name="contract[provider_id]" value="<%= @provider.id %>">
+    <label for="name">Name:</label>
+    <input id="name" type="text" name="contract[name]">
+    <br> 
+    <label for="wifi_name">Network Name:</label>
+    <input id="wifi_name" type="text" name="contract[wifi_name]">
+    <br>
+    <label for="wifi_name">Network Password:</label>
+    <input id="wifi_password" type="text" name="contract[wifi_password]">
+    <br>
+    <label for="approved">Share this network?</label>
+        <input type="radio" name="contract[approved]" value="1">Yes</input>
+        <input type="radio" name="contract[approved]" value="0">No</input>
+    <br> 
+    <input type="submit" value="Create New Network">
+</form>
+

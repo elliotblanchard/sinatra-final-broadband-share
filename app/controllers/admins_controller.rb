@@ -17,7 +17,14 @@ end
 get '/admin' do
     if (admin_logged_in?)
         "at admin profile page"
-        #erb:'/admins/show' 
+        # !!! do you want to allow the admin page to change the minimum distance for a wifi to be in range?
+        @providers = Provider.all
+        @students = Student.all
+        #Get all active contracts
+        @active_contracts = Contract.all.select { |contract| contract.approved == 1 }
+        Dotenv.load('.env') #Loads the API key
+        @api_key =  ENV['GOOGLE_API_KEY'] #Loads the API key using the Dotenv GEM 
+        erb:'/admins/show' 
     else
         redirect '/'
     end

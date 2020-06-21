@@ -39,6 +39,7 @@ class UsersController < ApplicationController
             active_contracts = Contract.all.select { |contract| contract.approved == 1 }
 
             #Get all active contracts in range
+            # !!! should this be in the model instead of view?
             student_location = get_location(@student.address) #GeoKit location object
             @nearby_contracts = []
             active_contracts.each do |contract|
@@ -59,8 +60,20 @@ class UsersController < ApplicationController
     get '/provider/:id' do
         if (provider_logged_in?) && (current_provider.id == params[:id].to_i)
             @provider = Provider.find(params[:id])
-            "at provider profile page"
-            #erb:'/providers/show' 
+            # !!! should this be in the model instead of view?
+            #Searching for nearby students will have to be disabled if number of students gets large - RN breaks after the first student found to save time
+            provider_location = get_location(@provider.address) #GeoKit location object
+            @nearby_students = false
+            Student.all.each do |student|
+                student_location = get_location(student.address) #GeoKit location object
+                distance = provider_location.distance_to(student_location)
+                if distance < UsersController::MIN_DISTANCE
+                    @nearby_students = true
+                    break
+                end
+            end
+
+            erb:'/providers/show' 
         else
             redirect '/'
         end
@@ -85,7 +98,7 @@ class UsersController < ApplicationController
         # !!! need to test if the address is valid using check_address(address)
 
         if params[:user_type] == "student"
-            # !!! may not need to have / save latlong if you have a verified street address
+            # lat/long is needed for the maps on the admin page
             student = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             if student.save
                 session[:student_id] = student.id
