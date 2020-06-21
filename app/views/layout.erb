@@ -16,7 +16,7 @@
   <body>
     <div class="wrapper">
         <div class ="nav">
-          <% if (student_logged_in?) || (provider_logged_in?) %>
+          <% if (student_logged_in?) || (provider_logged_in?) || (admin_logged_in?) %>
             <a href="/">Logo</a>
             <a href="/logout">Log Out</a>
           <% end %>

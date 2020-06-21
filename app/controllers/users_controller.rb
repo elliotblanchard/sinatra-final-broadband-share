@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-    MIN_DISTANCE = 0.3 #minimum distance (in miles) for a wifi network to be considered in range of a student
+    MIN_DISTANCE = 0.1 #minimum distance (in miles) for a wifi network to be considered in range of a student
 
     get "/login" do
         if student_logged_in?
