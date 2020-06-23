@@ -4,14 +4,22 @@
 <h3>Wifi near you:</h3>
 <ul>
   <% @nearby_contracts.each do |contract| %>
-    <p>
+   <form action="/contracts/<%= contract[:contract].id %>" method="POST">
+   <input id="hidden" type="hidden" name="_method" value="patch">
+      <p>
         <h4>Wifi network name: <%= contract[:contract].wifi_name %></h4>
         <ol>
            <li>Network password: <%= contract[:contract].wifi_password %></li>
            <li>Distance: <%= contract[:distance].to_f.round(1) %> miles</li>
            <li>Rating: <%= contract[:contract].rating %></li>
-           <li><a href="#">Works</a> or <a href="#">Does not work</a>
+           <li>
+            <label for="rating">Does this wifi work?</label>
+            <input type="radio" name="rating" value="1">Yes</input>
+            <input type="radio" name="rating" value="-1">No</input>
+            <input type="submit" name="Share feedback" id="Share feedback">
+           </li>
         </ol>
      </p>
+   </form>
   <% end %>
 </ul>

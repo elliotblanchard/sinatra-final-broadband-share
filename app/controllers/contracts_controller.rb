@@ -19,12 +19,22 @@ class ContractsController < ApplicationController
     
     patch '/contracts/:id' do
         @contract = Contract.find(params[:id])
-        if (params[:name].length > 0) && (params[:wifi_name].length > 0) && (params[:wifi_password].length > 0) && (params[:wifi_password].length > 0)
-            @contract.update(:name => params[:name], :wifi_name => params[:wifi_name], :wifi_password => params[:wifi_password], :approved => params[:approved])   
+        if params[:rating] == "-1" || params[:rating] == "1"
+            #Student feedback on a contract rating only
+            rating = @contract.rating
+            rating = rating + params[:rating].to_i
+            @contract.update(:rating => rating)
             @contract.save
-            redirect "/provider/#{@contract.provider.id}"
+            redirect "/student/#{current_student.id}"
         else
-            redirect "/contracts/#{contract.id}/edit"
+            #Provider edit on a contract overall
+            if (params[:name].length > 0) && (params[:wifi_name].length > 0) && (params[:wifi_password].length > 0) && (params[:wifi_password].length > 0)
+                @contract.update(:name => params[:name], :wifi_name => params[:wifi_name], :wifi_password => params[:wifi_password], :approved => params[:approved])   
+                @contract.save
+                redirect "/provider/#{@contract.provider.id}"
+            else
+                redirect "/contracts/#{contract.id}/edit"
+            end
         end
     end
 
