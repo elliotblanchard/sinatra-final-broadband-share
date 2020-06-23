@@ -11,4 +11,5 @@ use Rack::MethodOverride
 
 use UsersController
 use AdminsController
+use ContractsController
 run ApplicationController

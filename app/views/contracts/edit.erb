@@ -1,0 +1,16 @@
+<h2>Edit Share</h2>
+
+<form action="/contracts/<%= @contract.id %>" method="POST">
+<input id="hidden" type="hidden" name="_method" value="patch">
+<p>
+<h4>Share name: <input id="name" type="text" name="name" value="<%= @contract.name %>"></h4>
+<ol>
+   <li>Wifi network name: <input id="name" type="text" name="wifi_name" value="<%= @contract.wifi_name %>"></li>
+   <li>Network password: <input id="name" type="text" name="wifi_password" value="<%= @contract.wifi_password %>"></li>
+   <label for="approved">Share this network?</label>
+   <input type="radio" name="approved" <% if @contract.approved == 1  %>checked<% end %> value="1">Yes</input>
+   <input type="radio" name="approved" <% if @contract.approved == 0  %>checked<% end %> value="0">No</input>
+</ol>
+<input type="submit" name="submit" id="submit">
+</p>
+</form>

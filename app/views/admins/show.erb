@@ -11,9 +11,26 @@
   </head>
   <body>
     <h1>Admin Page</h1>
-    <h2>Number of students: <%=@students.length%></h2>
-    <h2>Number of providers: <%=@providers.length%></h2>
-    <h2>Number of shared networks: <%=@active_contracts.length%></h2>
+    <h2>Students: <%=@students.length%></h2>
+    <ol>
+    <% @students.each do |student| %>
+      <li><a href="/student/<%=student.id%>"><%=student.username%></a></li>
+    <% end %>
+    </ol>
+    <br>    
+    <h2>Providers: <%=@providers.length%></h2>
+    <ol>
+    <% @providers.each do |provider| %>
+      <li><a href="/provider/<%=provider.id%>"><%=provider.username%></a></li>
+    <% end %>
+    </ol>   
+    <br> 
+    <h2>Shared networks: <%=@active_contracts.length%></h2>
+    <ol>
+    <% @active_contracts.each do |contract| %>
+      <li><a href="/provider/<%=contract.provider.id%>"><%=contract.name%></a></li>
+    <% end %>
+    </ol> 
     <h3>Students (circle) + Shared Networks (arrow) Maps</h3>
     <!--The div element for the map -->
     <div id="map"></div>

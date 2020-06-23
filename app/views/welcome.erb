@@ -5,5 +5,7 @@
     <p>Help a New York student get the broadband they need to succeed in remote learning.</p>
   </h3>
 
-  <a href="/login">Log In</a> OR <a href="/signup">Sign Up</a>
+  <% if (!student_logged_in?) && (!provider_logged_in?) && (!admin_logged_in?) %>
+    <a href="/login">Log In</a> OR <a href="/signup">Sign Up</a>
+  <% end %>
 </div>

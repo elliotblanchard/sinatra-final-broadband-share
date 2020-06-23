@@ -32,7 +32,7 @@ class UsersController < ApplicationController
     end
 
     get '/student/:id' do
-        if (student_logged_in?) && (current_student.id == params[:id].to_i)
+        if ((student_logged_in?) && (current_student.id == params[:id].to_i)) || (admin_logged_in?)
             @student = Student.find(params[:id])
 
             #Get all active contracts
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
     end 
 
     get '/provider/:id' do
-        if (provider_logged_in?) && (current_provider.id == params[:id].to_i)
+        if ((provider_logged_in?) && (current_provider.id == params[:id].to_i)) || (admin_logged_in?)
             @provider = Provider.find(params[:id])
             # !!! should this be in the model instead of view?
             #Searching for nearby students will have to be disabled if number of students gets large - RN breaks after the first student found to save time
