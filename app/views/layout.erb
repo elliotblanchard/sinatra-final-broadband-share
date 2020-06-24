@@ -25,6 +25,9 @@
           <% if (student_logged_in?) || (provider_logged_in?) || (admin_logged_in?) %>
             <a href="/">Logo</a>
             <a href="/logout">Log Out</a>
+          <% else %>
+            <a href="/login">Login</a>
+            <a href="/signup">Signup</a>
           <% end %>
         </div>
 

@@ -11,7 +11,7 @@ module Location
     if location.street_address == "" || location.street_address == nil  || location.street_name == "" || location.street_name == nil || location.street_number == "" || location.street_number == nil
       return false
     else
-      return location.city
+      return location
     end
   end    
 
