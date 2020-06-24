@@ -3,7 +3,7 @@ require_relative '../../lib/location_module'
 class UsersController < ApplicationController
     include Location
 
-    MIN_DISTANCE = 0.1 #minimum distance (in miles) for a wifi network to be considered in range of a student
+    #MIN_DISTANCE = 0.1 #minimum distance (in miles) for a wifi network to be considered in range of a student
 
     get "/login" do
         if student_logged_in?
@@ -16,7 +16,6 @@ class UsersController < ApplicationController
     end
 
     post "/login" do
-        binding.pry
         if params[:user_type] == "student"
             student = Student.find_by(username: params[:username])
             if student && student.authenticate(params[:password])
@@ -43,22 +42,23 @@ class UsersController < ApplicationController
     get '/student/:id' do
         if ((student_logged_in?) && (current_student.id == params[:id].to_i)) || (admin_logged_in?)
             @student = Student.find(params[:id])
+            @nearby_contracts = @student.get_nearby_contracts
 
             #Get all active contracts
-            active_contracts = Contract.all.select { |contract| contract.approved == 1 }
+            #active_contracts = Contract.all.select { |contract| contract.approved == 1 }
 
             #Get all active contracts in range
             # !!! should this be in the model instead of view?
-            student_location = get_location(@student.address) #GeoKit location object
-            @nearby_contracts = []
-            active_contracts.each do |contract|
-                contract_location = get_location(contract.provider.address) #GeoKit location object
-                distance = student_location.distance_to(contract_location)
-                if distance < UsersController::MIN_DISTANCE
-                    hash = { :contract => contract, :distance => distance }
-                    @nearby_contracts << hash
-                end
-            end
+            #student_location = get_location(@student.address) #GeoKit location object
+            #@nearby_contracts = []
+            #active_contracts.each do |contract|
+            #    contract_location = get_location(contract.provider.address) #GeoKit location object
+            #    distance = student_location.distance_to(contract_location)
+            #    if distance < UsersController::MIN_DISTANCE
+            #        hash = { :contract => contract, :distance => distance }
+            #        @nearby_contracts << hash
+            #    end
+            #end
 
             erb:'/students/show' 
         else
@@ -69,18 +69,20 @@ class UsersController < ApplicationController
     get '/provider/:id' do
         if ((provider_logged_in?) && (current_provider.id == params[:id].to_i)) || (admin_logged_in?)
             @provider = Provider.find(params[:id])
+            @nearby_students = @provider.get_nearby_students
+
             # !!! should this be in the model instead of view?
             #Searching for nearby students will have to be disabled if number of students gets large - RN breaks after the first student found to save time
-            provider_location = get_location(@provider.address) #GeoKit location object
-            @nearby_students = false
-            Student.all.each do |student|
-                student_location = get_location(student.address) #GeoKit location object
-                distance = provider_location.distance_to(student_location)
-                if distance < UsersController::MIN_DISTANCE
-                    @nearby_students = true
-                    break
-                end
-            end
+            #provider_location = get_location(@provider.address) #GeoKit location object
+            #@nearby_students = false
+            #Student.all.each do |student|
+            #    student_location = get_location(student.address) #GeoKit location object
+            #    distance = provider_location.distance_to(student_location)
+            #    if distance < UsersController::MIN_DISTANCE
+            #        @nearby_students = true
+            #        break
+            #    end
+            #end
 
             erb:'/providers/show' 
         else
