@@ -16,27 +16,46 @@ class UsersController < ApplicationController
     end
 
     post "/login" do
-        if params[:user_type] == "student"
-            student = Student.find_by(username: params[:username])
-            if student && student.authenticate(params[:password])
-                session[:student_id] = student.id
+        if params[:user_type]
+            if params[:user_type] == "student"
+                user = Student.find_by(username: params[:username])
+            else
+                user = Provider.find_by(username: params[:username])
+            end
+            if user && user.authenticate(params[:password])
+                params[:user_type] == "student" ? (session[:student_id] = user.id) : (session[:provider_id] = user.id)
                 flash[:message] = "Welcome back"
-                redirect "/student/#{student.id}"
+                redirect "/#{user.class.name.downcase}/#{user.id}"
             else
                 flash[:error] = "Invalid username or password. Try again!"
                 redirect '/login'
             end
         else
-            provider = Provider.find_by(username: params[:username])
-            if provider && provider.authenticate(params[:password])
-                session[:provider_id] = provider.id
-                flash[:message] = "Welcome back"
-                redirect "/provider/#{provider.id}"
-            else
-                flash[:error] = "Invalid username or password. Try again!"
-                redirect '/login'
-            end
+            flash[:error] = "No user type: need to choose student or provider."
+            redirect "/login"
         end
+
+        #if params[:user_type] == "student"
+        #    student = Student.find_by(username: params[:username])
+        #    if student && student.authenticate(params[:password])
+        #        session[:student_id] = student.id
+        #        flash[:message] = "Welcome back"
+        #        redirect "/student/#{student.id}"
+        #    else
+        #        flash[:error] = "Invalid username or password. Try again!"
+        #        redirect '/login'
+        #    end
+        #else
+        #    provider = Provider.find_by(username: params[:username])
+        #    if provider && provider.authenticate(params[:password])
+        #        session[:provider_id] = provider.id
+        #        flash[:message] = "Welcome back"
+        #        redirect "/provider/#{provider.id}"
+        #    else
+        #        flash[:error] = "Invalid username or password. Try again!"
+        #        redirect '/login'
+        #    end
+        #end
     end
 
     get '/student/:id' do
@@ -112,11 +131,7 @@ class UsersController < ApplicationController
                 user = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             end
             if user.save
-                if params[:user_type] == "student"
-                    session[:student_id] = user.id
-                else
-                    session[:provider_id] = user.id
-                end
+                params[:user_type] == "student" ? (session[:student_id] = user.id) : (session[:provider_id] = user.id)
                 flash[:message] = "#{user.class.name} created."
                 redirect "/#{user.class.name.downcase}/#{user.id}"
             else
