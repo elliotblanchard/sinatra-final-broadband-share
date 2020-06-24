@@ -96,7 +96,6 @@ class UsersController < ApplicationController
 
     post "/signup" do
         # !!! need to test both passwords match (there is an active record validator that can test if two fields match)
-        # !!! need to check that they picked one radio button
         # Can't use mass assignment on create b/c of need to construct address and latlong
 
         full_address = params[:address] + ", New York, NY, " + params[:zip]
@@ -106,41 +105,69 @@ class UsersController < ApplicationController
         #Geokit::Geocoders::GoogleGeocoder.api_key = ENV['GOOGLE_API_KEY'] #Loads the API key into Geokit
         #location = Geokit::Geocoders::GoogleGeocoder.geocode full_address
 
-        if params[:user_type] == "student"
-            # lat/long is needed for the maps on the admin page
-            if location
-                student = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
-                if student.save
-                    session[:student_id] = student.id
-                    flash[:message] = "Student created."
-                    redirect "/student/#{student.id}"
-                end
-            else
-                if location 
-                    flash[:error] = "Signup failed: #{student.errors.full_messages.to_sentence}"
-                else
-                    flash[:error] = "Could not verify address."
-                end
-                redirect "/signup"
+        if location && params[:user_type]
+            if params[:user_type] == "student"
+                user = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
+            elsif params[:user_type] == "provider"
+                user = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             end
+            if user.save
+                if params[:user_type] == "student"
+                    session[:student_id] = user.id
+                else
+                    session[:provider_id] = user.id
+                end
+                flash[:message] = "#{user.class.name} created."
+                redirect "/#{user.class.name.downcase}/#{user.id}"
+            else
+                flash[:error] = "Signup failed: #{user.errors.full_messages.to_sentence}"
+                redirect "/signup"
+            end            
         else
-            # lat/long is needed for the maps on the admin page
-            if location
-                provider = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
-                if provider.save
-                    session[:provider_id] = provider.id  
-                    flash[:message] = "Provider created."  
-                    redirect "/provider/#{provider.id}"   
-                end            
+            if !location
+                flash[:error] = "Could not verify address."
             else
-                if location 
-                    flash[:error] = "Signup failed: #{student.errors.full_messages.to_sentence}"
-                else
-                    flash[:error] = "Could not verify address."
-                end 
-                redirect "/signup"
+                flash[:error] = "No user type: need to choose student or provider."
             end
-        end        
+            redirect "/signup"
+        end
+
+        
+        #if params[:user_type] == "student"
+            # lat/long is needed for the maps on the admin page
+        #    if location
+        #        student = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
+        #        if student.save
+        #            session[:student_id] = student.id
+        #            flash[:message] = "Student created."
+        #            redirect "/student/#{student.id}"
+        #        end
+        #    else
+        #        if location 
+        #            flash[:error] = "Signup failed: #{student.errors.full_messages.to_sentence}"
+        #        else
+        #            flash[:error] = "Could not verify address."
+        #        end
+        #        redirect "/signup"
+        #    end
+        #else
+            # lat/long is needed for the maps on the admin page
+        #    if location
+        #        provider = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
+        #        if provider.save
+        #            session[:provider_id] = provider.id  
+        #            flash[:message] = "Provider created."  
+        #            redirect "/provider/#{provider.id}"   
+        #        end            
+        #    else
+        #        if location 
+        #            flash[:error] = "Signup failed: #{student.errors.full_messages.to_sentence}"
+        #        else
+        #            flash[:error] = "Could not verify address."
+        #        end 
+        #        redirect "/signup"
+        #    end
+        #end        
 
         # Check location is valid from CLI
         # Confirms address user entered exists
