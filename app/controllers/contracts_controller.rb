@@ -1,11 +1,13 @@
 class ContractsController < ApplicationController
     post '/contracts' do 
-        if current_provider.id == params[:provider_id].to_i
-            contract = Contract.create(name: params[:name], provider_id: params[:provider_id], wifi_name: params[:wifi_name], wifi_password: params[:wifi_password], approved: params[:approved], rating: 0)
-            redirect "/provider/#{contract.provider.id}"
+        contract = Contract.new(name: params[:name], provider_id: params[:provider_id], wifi_name: params[:wifi_name], wifi_password: params[:wifi_password], approved: params[:approved], rating: 0)
+        if (current_provider.id == params[:provider_id].to_i) && (contract.save)
+            flash[:message] = "Share created."
+            #contract = Contract.create(name: params[:name], provider_id: params[:provider_id], wifi_name: params[:wifi_name], wifi_password: params[:wifi_password], approved: params[:approved], rating: 0)
         else
-            redirect "/"
+            flash[:error] = "Share creation failed: #{contract.errors.full_messages.to_sentence}"
         end
+        redirect "/provider/#{contract.provider.id}"
     end
 
     get '/contracts/:id/edit' do 

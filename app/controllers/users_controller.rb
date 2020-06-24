@@ -16,16 +16,20 @@ class UsersController < ApplicationController
             student = Student.find_by(username: params[:username])
             if student && student.authenticate(params[:password])
                 session[:student_id] = student.id
+                flash[:message] = "Welcome back"
                 redirect "/student/#{student.id}"
             else
+                flash[:error] = "Invalid username or password. Try again!"
                 redirect '/login'
             end
         else
             provider = Provider.find_by(username: params[:username])
             if provider && provider.authenticate(params[:password])
                 session[:provider_id] = provider.id
+                flash[:message] = "Welcome back"
                 redirect "/provider/#{provider.id}"
             else
+                flash[:error] = "Invalid username or password. Try again!"
                 redirect '/login'
             end
         end
@@ -84,11 +88,10 @@ class UsersController < ApplicationController
     end
 
     post "/signup" do
-        # !!! need to check that the username or email isn't already taken in students / providers
         # !!! need to test if the address is valid
-        # !!! need to test if the email address is valid
         # !!! need to test password for complexity / length + both passwords match
         # !!! need to make sure that no fields are blank
+        # !!! need to check that they picked one radio button
         # Can't use mass assignment on create b/c of need to construct address and latlong
         full_address = params[:address] + ", New York, NY, " + params[:zip]
         Dotenv.load('.env') #Loads the API key using the Dotenv GEM
@@ -102,8 +105,10 @@ class UsersController < ApplicationController
             student = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             if student.save
                 session[:student_id] = student.id
+                flash[:message] = "Student created."
                 redirect "/student/#{student.id}"
             else
+                flash[:error] = "Signup failed: #{student.errors.full_messages.to_sentence}"
                 redirect "/signup"
             end
         else
@@ -111,8 +116,10 @@ class UsersController < ApplicationController
             provider = Provider.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             if provider.save
                 session[:provider_id] = provider.id
+                flash[:message] = "Provider created."
                 redirect "/provider/#{provider.id}"
             else
+                flash[:error] = "Signup failed: #{provider.errors.full_messages.to_sentence}"
                 redirect "/signup"
             end
         end        

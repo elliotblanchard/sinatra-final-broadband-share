@@ -15,6 +15,12 @@
   </head>
   <body>
     <div class="wrapper">
+        <% if flash[:error] %>
+          <h3 style="color:red;"><%= flash[:error] %></h3>
+        <% end %>
+        <% if flash[:message] %>
+          <h3 style="color:green;"><%= flash[:message] %></h3>
+        <% end %>
         <div class ="nav">
           <% if (student_logged_in?) || (provider_logged_in?) || (admin_logged_in?) %>
             <a href="/">Logo</a>
