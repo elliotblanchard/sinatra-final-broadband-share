@@ -1,4 +1,8 @@
+require_relative '../../lib/location_module'
+
 class UsersController < ApplicationController
+    include Location
+
     MIN_DISTANCE = 0.1 #minimum distance (in miles) for a wifi network to be considered in range of a student
 
     get "/login" do
@@ -12,6 +16,7 @@ class UsersController < ApplicationController
     end
 
     post "/login" do
+        binding.pry
         if params[:user_type] == "student"
             student = Student.find_by(username: params[:username])
             if student && student.authenticate(params[:password])
