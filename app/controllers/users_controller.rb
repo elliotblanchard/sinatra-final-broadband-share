@@ -89,8 +89,8 @@ class UsersController < ApplicationController
 
     post "/signup" do
         # !!! need to test if the address is valid
-        # !!! need to test password for complexity / length + both passwords match
-        # !!! need to make sure that no fields are blank
+        # !!! need to test both passwords match (there is an active record validator that can test if two fields match)
+        # !!! need to make sure that no fields are blank (ZIP field can still be blank)
         # !!! need to check that they picked one radio button
         # Can't use mass assignment on create b/c of need to construct address and latlong
         full_address = params[:address] + ", New York, NY, " + params[:zip]
