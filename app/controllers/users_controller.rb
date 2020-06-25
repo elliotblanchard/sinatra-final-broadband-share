@@ -25,7 +25,7 @@ class UsersController < ApplicationController
             if user && user.authenticate(params[:password])
                 params[:user_type] == "student" ? (session[:student_id] = user.id) : (session[:provider_id] = user.id)
                 flash[:message] = "Welcome back"
-                redirect "/#{user.class.name.downcase}/#{user.id}"
+                redirect "/#{user.class.name.downcase}s/#{user.id}"
             else
                 flash[:error] = "Invalid username or password. Try again!"
                 redirect '/login'
@@ -58,7 +58,7 @@ class UsersController < ApplicationController
         #end
     end
 
-    get '/student/:id' do
+    get '/students/:id' do
         if ((student_logged_in?) && (current_student.id == params[:id].to_i)) || (admin_logged_in?)
             @student = Student.find(params[:id])
             @nearby_contracts = @student.get_nearby_contracts
@@ -85,7 +85,7 @@ class UsersController < ApplicationController
         end        
     end 
 
-    get '/provider/:id' do
+    get '/providers/:id' do
         if ((provider_logged_in?) && (current_provider.id == params[:id].to_i)) || (admin_logged_in?)
             @provider = Provider.find(params[:id])
             @nearby_students = @provider.get_nearby_students
@@ -133,7 +133,7 @@ class UsersController < ApplicationController
             if user.save
                 params[:user_type] == "student" ? (session[:student_id] = user.id) : (session[:provider_id] = user.id)
                 flash[:message] = "#{user.class.name} created."
-                redirect "/#{user.class.name.downcase}/#{user.id}"
+                redirect "/#{user.class.name.downcase}s/#{user.id}"
             else
                 flash[:error] = "Signup failed: #{user.errors.full_messages.to_sentence}"
                 redirect "/signup"

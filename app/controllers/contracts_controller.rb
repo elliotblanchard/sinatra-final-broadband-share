@@ -7,7 +7,7 @@ class ContractsController < ApplicationController
         else
             flash[:error] = "Share creation failed: #{contract.errors.full_messages.to_sentence}"
         end
-        redirect "/provider/#{contract.provider.id}"
+        redirect "/providers/#{contract.provider.id}"
     end
 
     get '/contracts/:id/edit' do 
@@ -27,15 +27,19 @@ class ContractsController < ApplicationController
             rating = rating + params[:rating].to_i
             @contract.update(:rating => rating)
             @contract.save
-            redirect "/student/#{current_student.id}"
+            redirect "/students/#{current_student.id}"
         else
             #Provider edit on a contract overall
-            if (params[:name].length > 0) && (params[:wifi_name].length > 0) && (params[:wifi_password].length > 0) && (params[:wifi_password].length > 0)
-                @contract.update(:name => params[:name], :wifi_name => params[:wifi_name], :wifi_password => params[:wifi_password], :approved => params[:approved])   
-                @contract.save
-                redirect "/provider/#{@contract.provider.id}"
+            @contract.update(:name => params[:name], :wifi_name => params[:wifi_name], :wifi_password => params[:wifi_password], :approved => params[:approved])
+            #if (params[:name].length > 0) && (params[:wifi_name].length > 0) && (params[:wifi_password].length > 0) && (params[:wifi_password].length > 0)
+            if @contract.save
+                #@contract.update(:name => params[:name], :wifi_name => params[:wifi_name], :wifi_password => params[:wifi_password], :approved => params[:approved])   
+                #@contract.save
+                flash[:message] = "Share updated."
+                redirect "/providers/#{@contract.provider.id}"
             else
-                redirect "/contracts/#{contract.id}/edit"
+                flash[:error] = "Share update failed: #{@contract.errors.full_messages.to_sentence}"
+                redirect "/contracts/#{@contract.id}/edit"
             end
         end
     end
@@ -45,7 +49,7 @@ class ContractsController < ApplicationController
         if current_provider.id == @contract.provider.id
             @contract.delete
         end
-        redirect "/provider/#{@contract.provider.id}"
+        redirect "/providers/#{@contract.provider.id}"
       end
 
 end

@@ -14,24 +14,24 @@
     <h2>Students: <%=@students.length%></h2>
     <ol>
     <% @students.each do |student| %>
-      <li><a href="/student/<%=student.id%>"><%=student.username%></a></li>
+      <li><a href="/students/<%=student.id%>"><%=student.username%></a></li>
     <% end %>
     </ol>
     <br>    
     <h2>Providers: <%=@providers.length%></h2>
     <ol>
     <% @providers.each do |provider| %>
-      <li><a href="/provider/<%=provider.id%>"><%=provider.username%></a></li>
+      <li><a href="/providers/<%=provider.id%>"><%=provider.username%></a></li>
     <% end %>
     </ol>   
     <br> 
     <h2>Shared networks: <%=@active_contracts.length%></h2>
     <ol>
     <% @active_contracts.each do |contract| %>
-      <li><a href="/provider/<%=contract.provider.id%>"><%=contract.name%></a></li>
+      <li><a href="/providers/<%=contract.provider.id%>"><%=contract.name%></a></li>
     <% end %>
     </ol> 
-    <h3>Students (circle) + Shared Networks (arrow) Maps</h3>
+    <h3>Students (pin) + Shared Networks (circle) Maps</h3>
     <!--The div element for the map -->
     <div id="map"></div>
     <script>
@@ -50,11 +50,7 @@
     // The markers, positioned for each student
     <% @students.each do |student| %>
         var marker_<%=student.id%> = new google.maps.Marker({
-            position: student_<%=student.id%>, 
-            icon: {
-                path: google.maps.SymbolPath.CIRCLE,
-                scale: 3
-              },            
+            position: student_<%=student.id%>,             
             map: map
         });
     <% end %>
@@ -63,8 +59,8 @@
         var marker_<%=contract.provider.id%> = new google.maps.Marker({
             position: provider_<%=contract.provider.id%>, 
             icon: {
-                path: google.maps.SymbolPath.BACKWARD_OPEN_ARROW,
-                scale: 2
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 4
               },            
             map: map
         });

@@ -15,7 +15,7 @@ class Provider < ActiveRecord::Base
     #has_many :students, through: :contract
 
     def get_nearby_students
-        #Searching for nearby students will have to be disabled if number of students gets large - RN breaks after the first student found to save time
+        #Searching for nearby students will have to be disabled if number of students gets large - right now breaks out of loop after the first student found to save time
         provider_location = get_location(self.address) #GeoKit location object
         nearby_students = false
         Student.all.each do |student|
