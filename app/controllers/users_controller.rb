@@ -124,7 +124,7 @@ class UsersController < ApplicationController
         #Geokit::Geocoders::GoogleGeocoder.api_key = ENV['GOOGLE_API_KEY'] #Loads the API key into Geokit
         #location = Geokit::Geocoders::GoogleGeocoder.geocode full_address
 
-        if location && params[:user_type]
+        if location && params[:user_type] && (params[:password] == params[:password_confirm])
             if params[:user_type] == "student"
                 user = Student.new(:username => params[:username], :email => params[:email], :password => params[:password], :address => full_address, :latlong => location.ll)
             elsif params[:user_type] == "provider"
@@ -141,6 +141,8 @@ class UsersController < ApplicationController
         else
             if !location
                 flash[:error] = "Could not verify address."
+            elsif params[:password] != params[:password_confirm]
+                flash[:error] = "Passwords need to match."
             else
                 flash[:error] = "No user type: need to choose student or provider."
             end
