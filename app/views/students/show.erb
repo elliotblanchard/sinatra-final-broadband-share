@@ -6,6 +6,7 @@
   <% @nearby_contracts.each do |contract| %>
    <form action="/contracts/<%= contract[:contract].id %>" method="POST">
    <input id="hidden" type="hidden" name="_method" value="patch">
+   <input id="hidden" type="hidden" name="is_student" value="true">
       <p>
         <h4>Wifi network name: <%= contract[:contract].wifi_name %></h4>
         <ol>

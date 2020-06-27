@@ -9,8 +9,6 @@ class Student < ActiveRecord::Base
     validates :username, :email, uniqueness: true
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, length: { in: 6..20 }
-    #has_many :contracts
-    #has_many :providers, through: :contract
 
     def get_nearby_contracts
             #Get all active contracts

@@ -12,8 +12,6 @@ class Provider < ActiveRecord::Base
     validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }
     validates :password, length: { in: 6..20 }
 
-    #has_many :students, through: :contract
-
     def get_nearby_students
         #Searching for nearby students will have to be disabled if number of students gets large - right now breaks out of loop after the first student found to save time
         provider_location = get_location(self.address) #GeoKit location object

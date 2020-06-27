@@ -16,8 +16,6 @@ end
 
 get '/admin' do
     if (admin_logged_in?)
-        "at admin profile page"
-        # !!! do you want to allow the admin page to change the minimum distance for a wifi to be in range?
         @providers = Provider.all
         @students = Student.all
         #Get all active contracts
