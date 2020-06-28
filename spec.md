@@ -11,7 +11,7 @@ Specs:
 - [x] Ensure that users can't modify content created by other users - I check session hash to restrict access to Contracts, Students, and Providers to only the correct users - for security and privacy
 - [x] Include user input validations - Extensive Active Record, address, and REGEX validation
 - [x] BONUS - not required - Display validation failures to user with error message (example form URL e.g. /posts/new) - Plenty of status and error flash messages
-- [ ] Your README.md includes a short description, install instructions, a contributors guide and a link to the license for your code
+- [x] Your README.md includes a short description, install instructions, a contributors guide and a link to the license for your code
 
 Confirm
 - [x] You have a large number of small Git commits
